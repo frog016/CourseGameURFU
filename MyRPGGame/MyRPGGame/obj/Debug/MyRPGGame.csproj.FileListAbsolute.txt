@@ -1,0 +1,13 @@
+D:\C#\MyRPGGame\MyRPGGame\bin\Debug\MyRPGGame.exe.config
+D:\C#\MyRPGGame\MyRPGGame\bin\Debug\MyRPGGame.exe
+D:\C#\MyRPGGame\MyRPGGame\bin\Debug\MyRPGGame.pdb
+D:\C#\MyRPGGame\MyRPGGame\bin\Debug\nunit.framework.dll
+D:\C#\MyRPGGame\MyRPGGame\bin\Debug\nunit.framework.xml
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.csprojAssemblyReference.cache
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.Properties.Resources.resources
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.csproj.GenerateResource.cache
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.csproj.CoreCompileInputs.cache
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.csproj.CopyComplete
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.exe
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.pdb
+D:\C#\MyRPGGame\MyRPGGame\obj\Debug\MyRPGGame.BattleGround.resources
