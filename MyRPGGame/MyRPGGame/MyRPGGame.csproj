@@ -56,6 +56,12 @@
     <Compile Include="Controls\BindKeyboardKeys.cs" />
     <Compile Include="Controls\Directoin.cs" />
     <Compile Include="Interfaces\IControl.cs" />
+    <Compile Include="LoseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoseForm.Designer.cs">
+      <DependentUpon>LoseForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Cooldown.cs" />
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Unit.cs" />

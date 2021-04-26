@@ -11,7 +11,7 @@ namespace MyRPGGame
         public Cooldown(double cooldownTime)
         {
             CooldownTime = cooldownTime;
-            LastTimeUse = DateTime.Now;
+            LastTimeUse = new DateTime();
         }
 
         public bool IsReady()

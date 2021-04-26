@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
+using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
 
@@ -7,49 +7,63 @@ namespace MyRPGGame
 {
     public partial class BattleGround : Form
     {
-        private readonly PlayerControl playerControl;
         private readonly Map map;
-        //public readonly System.Timers.Timer MovePerSecond;
-        //private readonly List<AI> ai;
 
         public BattleGround(int width, int height)
         {
             InitializeComponent();
 
-            map = new Map(width/10, height/10);
-            //ai = new List<AI>();
+            map = new Map(width / 10, height / 10);
 
-            //MovePerSecond = new System.Timers.Timer();
-            //MovePerSecond.AutoReset = true;
-            //MovePerSecond.Interval = 100;
-            foreach (var m in map.Units)
-            {
-                var newAi = new AI(m, map);
-                //ai.Add(newAi);
-                //MovePerSecond.Elapsed += newAi.A;
-            }
-            playerControl = new PlayerControl(map.Player, map);
-            //MovePerSecond.Start();
+            SetAllTimers();
 
             Paint += DrawAllUnits;
-            KeyDown += playerControl.MoveUnit;
-            KeyDown += playerControl.TryAttack;
+            KeyDown += PressKeyDown;
         }
 
         public void DrawAllUnits(object sender, PaintEventArgs e)
         {
-            DoubleBuffered = true;
-            map.Player.UnitModel.DrawUnit(e.Graphics);
+            if (!map.Player.UnitClass.IsAlive)
+            {
+                var loseForm = new LoseForm();
+                Hide();
+                loseForm.Show();
+            }
 
+            DoubleBuffered = true;
+            map.Player.Model.DrawUnit(e.Graphics);
+            map.Player.Model.DrawHpBar(e.Graphics);
             foreach (var unit in map.Units)
             {
-                unit.UnitModel.DrawUnit(e.Graphics);
-                unit.UnitModel.DrawHpBar(e.Graphics);
+                unit.Model.DrawUnit(e.Graphics);
+                unit.Model.DrawHpBar(e.Graphics);
             }
+
             DrawMap(e.Graphics);
             DrawTestUnits(e.Graphics);
-
             Invalidate();
+        }
+
+        private void SetAllTimers()
+        {
+            var movePerSecond = new System.Timers.Timer(500);
+            movePerSecond.AutoReset = true;
+            movePerSecond.Elapsed += StartAllEnemies;
+            movePerSecond.Start();
+        }
+
+        private void StartAllEnemies(object sender, ElapsedEventArgs e)
+        {
+            var units = map.Units.ToList();
+            foreach (var unit in units)
+                unit.Control.TryAttack(Keys.K);
+            
+        }
+
+        private void PressKeyDown(object sender, KeyEventArgs e)
+        {
+            map.Player.Control.MoveUnit(e.KeyData);
+            map.Player.Control.TryAttack(e.KeyData);
         }
 
         #region ForTestMyGame

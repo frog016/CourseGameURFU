@@ -53,5 +53,16 @@ namespace MyRPGGame
         {
             return $"X: {X}, Y: {Y}";
         }
+
+        public override bool Equals(object obj)
+        {
+            var vector = (Vector)obj;
+            return X == vector.X && Y == vector.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            return 397*X + 123*Y;
+        }
     }
 }

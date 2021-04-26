@@ -1,111 +1,146 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace MyRPGGame
 {
     public class AI : IControl
     {
-        private readonly Unit unit;
-        private Vector target { get; set; }
+        private readonly Swordsman unitClass;
+        private Unit Target { get; set; }
         private readonly Map map;
         private readonly int speed = Map.CellSize;
 
-        public AI(Unit unit, Map map)
+        public AI(Map map, Swordsman unitClass)
         {
-            this.unit = unit;
             this.map = map;
+            this.unitClass = unitClass;
         }
 
-        public void TryAttack(object sender, KeyEventArgs e)
+        public void TryAttack(Keys key)
         {
-            throw new NotImplementedException();
-        }
+            FindNearestTarget();
+            if (Target == null)
+                return;
 
-        public void MoveUnit(object sender, KeyEventArgs e)
-        {
-            foreach (var nearestTarget in FindPathToNearestTarget())
-                unit.UnitType.Location.Move(nearestTarget - unit.UnitType.Location);
-        }
-
-        public void A(object sender, EventArgs e)
-        {
-            foreach (var nearestTarget in FindPathToNearestTarget())
-                unit.UnitType.Location.Move(nearestTarget - unit.UnitType.Location);
-        }
-
-        List<Vector> FindPathToNearestTarget()
-        {
-            var path = new Dictionary<Vector, Vector> {{unit.UnitType.Location, null }};
-            var visited = new HashSet<Vector> { unit.UnitType.Location };
-            var queue = new Queue<Vector>();
-            var otherUnit = new HashSet<Vector> {map.Player.UnitType.Location};
-            foreach (var u in map.Units)
-                if (u.UnitType.Location != unit.UnitType.Location)
-                {
-                    var leftPoint = new Vector(u.UnitType.Location.X - UnitView.UnitSize.Width - Map.CellSize,
-                        u.UnitType.Location.Y);
-                    var rightPoint = new Vector(u.UnitType.Location.X + UnitView.UnitSize.Width + Map.CellSize,
-                        u.UnitType.Location.Y);
-                    if (IsOnMap(leftPoint))
-                        otherUnit.Add(leftPoint);
-                    if (IsOnMap(rightPoint))
-                        otherUnit.Add(rightPoint);
-                }
-
-
-            queue.Enqueue(unit.UnitType.Location);
-            while (queue.Count != 0)
+            if (CheckTargetInAttackRange())
             {
-                var currentPoint = queue.Dequeue();
-                if (otherUnit.Contains(currentPoint))
+                unitClass.Attack(Target.UnitClass);
+                if (!Target.UnitClass.IsAlive)
                 {
-                    target = currentPoint;
-                    break;
+                    Target.SetUnitBorderState(map, false);
+                    map.Units.Remove(Target);
                 }
-
-                var neighbors = GetNeighbors(currentPoint)
-                    .Where(point => point.X >= 0 && point.X < map.MapCountCells.Width &&
-                                    point.Y >= 0 && point.Y < map.MapCountCells.Height &&
-                                    !visited.Contains(point) && !map.CellMap[point.X, point.Y]);
-                foreach (var neighbor in neighbors)
-                {
-                    queue.Enqueue(neighbor);
-                    visited.Add(neighbor);
-                    path[neighbor] = currentPoint;
-                }
+                return;
             }
-
-            var pathItem = target; 
-            var result = new List<Vector>();
-            while (pathItem != null)
-            {
-                result.Add(pathItem);
-                pathItem = path[pathItem];
-            }
-            result.Reverse();
-            return result;
+            MoveUnit(key);
         }
 
-        IEnumerable<Vector> GetNeighbors(Vector point)
+        public void MoveUnit(Keys key)
+        {
+            var leftPoint = new Vector(Target.UnitClass.Location.X - UnitView.UnitSize.Width - Map.CellSize,
+                Target.UnitClass.Location.Y);
+            var rightPoint = new Vector(Target.UnitClass.Location.X + UnitView.UnitSize.Width + Map.CellSize,
+                Target.UnitClass.Location.Y);
+
+            var target = (unitClass.Location - leftPoint).Length() < (unitClass.Location - rightPoint).Length() ? leftPoint : rightPoint;
+            var neighbor = GetNeighbors(unitClass.Location)
+                .OrderBy(s => ((target - s).Length(), s.X))
+                .Where(v => CheckCorrectMove(v - unitClass.Location))
+                .FirstOrDefault();
+            var direction = neighbor - unitClass.Location;
+            unitClass.CurrentDirection = direction.X > 0 ?
+                Direction.Right :
+                direction.X < 0 ? Direction.Left :
+                    unitClass.CurrentDirection;
+            if (map.IsOnMap(neighbor) && CheckCorrectMove(direction))
+            {
+                map.Units.Find(u => u.UnitClass == unitClass).MoveBorder(map, direction);
+                unitClass.Location.Move(direction);
+            }
+        }
+
+        private void FindNearestTarget()
+        {
+            var units = map.Units.ToList();
+            units.Add(map.Player);
+            Target = units.Where(u => u.UnitClass != unitClass)
+                .OrderBy(u => (u.UnitClass.Location - unitClass.Location).Length())
+                .FirstOrDefault();
+        }
+
+        private bool CheckTargetInAttackRange()
+        {
+            var currentDirection = unitClass.CurrentDirection == Direction.Right ? 1 : -1;
+            var distance = LaunchAttackBeam(currentDirection);
+            if (distance == -1)
+                return false;
+
+            if (unitClass.Location.X + currentDirection * (distance * Map.CellSize + (UnitView.UnitSize.Width / 20) * Map.CellSize) ==
+                Target.UnitClass.Location.X - currentDirection * (UnitView.UnitSize.Width / 20) * Map.CellSize && CheckUnitFront(-2, 2))
+                return true;
+
+            return false;
+        }
+
+        private bool CheckUnitFront(int segmentStart, int segmentEnd)
+        {
+            var rangeCellX = unitClass.CurrentDirection == Direction.Right ?
+                (unitClass.Location.X + (UnitView.UnitSize.Width/20)*10) / Map.CellSize + unitClass.AttackRange :
+                (unitClass.Location.X - (UnitView.UnitSize.Width / 20) * 10) / Map.CellSize - unitClass.AttackRange;
+
+            if (!map.IsOnMap(new Vector(rangeCellX * 10, unitClass.Location.Y)))
+                return false;
+
+            for (var i = segmentStart; i <= segmentEnd; i++)
+                if (!map.CellMap[rangeCellX, unitClass.Location.Y / Map.CellSize + i])
+                    return false;
+
+            return true;
+        }
+
+        private int LaunchAttackBeam(int direction)
+        {
+            var distanceToObject = 1;
+            while (distanceToObject <= unitClass.AttackRange &&
+                   !map.CellMap[
+                       unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
+                       unitClass.Location.Y / Map.CellSize])
+                distanceToObject++;
+
+            return distanceToObject <= unitClass.AttackRange ? distanceToObject : -1;
+        }
+
+        private List<Vector> GetNeighbors(Vector point)
         {
             var result = new List<Vector>();
 
             for (var dy = -1; dy <= 1; dy++)
             for (var dx = -1; dx <= 1; dx++)
                 if ((dx == 0 || dy == 0) && dx + dy != 0)
-                    yield return new Vector(point.X + dx*speed, point.Y + dy* speed);
+                    result.Add(new Vector(point.X + dx*speed, point.Y + dy* speed));
+
+            return result;
         }
 
-        bool IsOnMap(Vector point)
+        private bool CheckCorrectMove(Vector direction)
         {
-            return point.X >= UnitView.UnitSize.Width / 2 &&
-                   point.X <= map.MapCountCells.Width * Map.CellSize - UnitView.UnitSize.Width / 2 &&
-                   point.Y >= UnitView.UnitSize.Height / 2 &&
-                   point.Y <= map.MapCountCells.Height * Map.CellSize - UnitView.UnitSize.Height / 2;
+            var border = direction.X != 0 ? UnitView.UnitSize.Height / 10 : UnitView.UnitSize.Width / 10;
+            var sign = Math.Sign(direction.X != 0 ? direction.X : direction.Y);
+            for (var i = 0; i < border; i++)
+            {
+                var x = direction.X != 0 ?
+                    unitClass.Location.X / Map.CellSize + sign * (UnitView.UnitSize.Width / (2 * Map.CellSize)) + sign :
+                    unitClass.Location.X / Map.CellSize - (UnitView.UnitSize.Width / (2 * Map.CellSize)) + i;
+                var y = direction.Y == 0 ?
+                    unitClass.Location.Y / Map.CellSize - (UnitView.UnitSize.Height / (2 * Map.CellSize)) + i :
+                    unitClass.Location.Y / Map.CellSize + sign * (UnitView.UnitSize.Height / (2 * Map.CellSize)) + sign;
+                if (map.CellMap[x, y])
+                    return false;
+            }
+
+            return true;
         }
     }
 }

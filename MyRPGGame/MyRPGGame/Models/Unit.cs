@@ -5,28 +5,30 @@ namespace MyRPGGame
 {
     public class Unit
     {
-        public readonly Swordsman UnitType;
-        public readonly UnitView UnitModel;
+        public readonly Swordsman UnitClass;
+        public readonly UnitView Model;
+        public readonly IControl Control;
         
-        public Unit(Swordsman unitType, Image unitModel)
+        public Unit(Swordsman unitClass, Image unitModel, IControl control)
         {
-            UnitType = unitType;
-            UnitModel = new UnitView(unitType, unitModel);
+            UnitClass = unitClass;
+            Model = new UnitView(unitClass, unitModel);
+            Control = control;
         }
 
         public void SetUnitBorderState(Map map, bool state)
         {
             for (var i = 0; i < UnitView.UnitSize.Height / 10; i++)
             for (var j = 0; j < UnitView.UnitSize.Width / 10; j++)
-                map.CellMap[UnitModel.TopLeft.X / 10 + j, UnitModel.TopLeft.Y / 10 + i] = state;
+                map.CellMap[Model.TopLeft.X / 10 + j, Model.TopLeft.Y / 10 + i] = state;
         }
 
         public void MoveBorder(Map map, Vector direction)
         {
             var border = direction.X != 0 ? UnitView.UnitSize.Height / 10 : UnitView.UnitSize.Width / 10;
             var sign = new Point(direction.X != 0 ? Math.Sign(direction.X) : 0, direction.Y != 0 ? Math.Sign(direction.Y) : 0);
-            var backSide = direction.X != 0 ? sign.X == 1 ? UnitModel.TopLeft : UnitModel.TopRight : sign.Y == 1 ? UnitModel.TopLeft : UnitModel.BottomLeft;
-            var frontSide = direction.X != 0 ? sign.X == -1 ? UnitModel.TopLeft : UnitModel.TopRight : sign.Y == 1 ? UnitModel.BottomLeft : UnitModel.TopLeft;
+            var backSide = direction.X != 0 ? sign.X == 1 ? Model.TopLeft : Model.TopRight : sign.Y == 1 ? Model.TopLeft : Model.BottomLeft;
+            var frontSide = direction.X != 0 ? sign.X == -1 ? Model.TopLeft : Model.TopRight : sign.Y == 1 ? Model.BottomLeft : Model.TopLeft;
 
             for (var i = 0; i < border; i++)
             {
