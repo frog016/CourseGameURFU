@@ -5,7 +5,7 @@ namespace MyRPGGame
 {
     public class UnitView
     {
-        private readonly Swordsman unit;
+        private readonly UnitClass unit;
 
         public Point TopLeft => new Point(unit.Location.X - (UnitSize.Width / 20)*10, unit.Location.Y - (UnitSize.Height / 20) * 10);
         public Point TopRight => new Point(unit.Location.X + (UnitSize.Width / 20) * 10, unit.Location.Y - (UnitSize.Height / 20) * 10);
@@ -15,7 +15,7 @@ namespace MyRPGGame
         public static readonly Size UnitSize = new Size(5 * Map.CellSize, 7 * Map.CellSize);
         //private readonly Image sprite;
 
-        public UnitView(Swordsman unit, Image sprite)
+        public UnitView(UnitClass unit, Image sprite)
         {
             this.unit = unit;
             //this.sprite = sprite;
@@ -35,7 +35,7 @@ namespace MyRPGGame
 
         public void DrawHpBar(Graphics window)
         {
-            window.DrawString(unit.Health.ToString(), new Font(new FontFamily("Arial"), 10), new HatchBrush(HatchStyle.Cross, Color.Black), new PointF(TopLeft.X, TopLeft.Y - 10));
+            window.DrawString(unit.Attributes.Health.ToString(), new Font(new FontFamily("Arial"), 10), new HatchBrush(HatchStyle.Cross, Color.Black), new PointF(TopLeft.X, TopLeft.Y - 10));
         }
     }
 }

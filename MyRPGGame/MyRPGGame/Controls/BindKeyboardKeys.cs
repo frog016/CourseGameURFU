@@ -9,7 +9,8 @@ namespace MyRPGGame
         public static Keys MoveLeft { get; set; }
         public static Keys MoveRight { get; set; }
 
-        public static Keys Attack { get; set; }
+        public static Keys FirstSkill { get; set; }
+        public static Keys SecondSkill { get; set; }
 
         static BindKeyboardKeys()
         {
@@ -17,7 +18,8 @@ namespace MyRPGGame
             MoveDown = Keys.S;
             MoveLeft = Keys.A;
             MoveRight = Keys.D;
-            Attack = Keys.F;
+            FirstSkill = Keys.D1;
+            SecondSkill = Keys.D2;
         }
     }
 }

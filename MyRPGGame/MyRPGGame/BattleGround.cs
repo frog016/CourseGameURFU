@@ -7,23 +7,27 @@ namespace MyRPGGame
 {
     public partial class BattleGround : Form
     {
-        private readonly Map map;
+        private readonly Map map; 
+        //private readonly Camera camera;
 
         public BattleGround(int width, int height)
         {
             InitializeComponent();
-
+            
             map = new Map(width / 10, height / 10);
+            //camera = new Camera();
 
             SetAllTimers();
-
+            //Реализовать слежение через подгрузку отрисовки карты.
             Paint += DrawAllUnits;
+            Paint += InitializeInterface;
             KeyDown += PressKeyDown;
         }
 
         public void DrawAllUnits(object sender, PaintEventArgs e)
         {
-            if (!map.Player.UnitClass.IsAlive)
+            var p = (UnitClass) map.Player.UnitClass;
+            if (!p.IsAlive)
             {
                 var loseForm = new LoseForm();
                 Hide();
@@ -38,6 +42,7 @@ namespace MyRPGGame
                 unit.Model.DrawUnit(e.Graphics);
                 unit.Model.DrawHpBar(e.Graphics);
             }
+            //camera.FocusCameraOnPlayer(map.Player, e.Graphics);
 
             DrawMap(e.Graphics);
             DrawTestUnits(e.Graphics);
@@ -64,6 +69,28 @@ namespace MyRPGGame
         {
             map.Player.Control.MoveUnit(e.KeyData);
             map.Player.Control.TryAttack(e.KeyData);
+        }
+
+        private void InitializeInterface(object sender, PaintEventArgs e)
+        {
+            var graphics = e.Graphics;
+            var skillPanelSize = new Size(50, 50);
+            var player = (UnitClass)map.Player.UnitClass;
+            for (var i = 0; i < player.Skills.Count; i++)
+            {
+                var skillCell = new Rectangle(
+                        new Point(Size.Width / 2 - skillPanelSize.Width + skillPanelSize.Width * i,
+                            Size.Height - skillPanelSize.Height - 40), skillPanelSize);
+                graphics.FillRectangle(Brushes.BurlyWood, skillCell);
+                graphics.DrawRectangle(new Pen(Color.SaddleBrown, 3), skillCell);
+                graphics.DrawString(player.Skills[i].Name, new Font("Arial", 10), Brushes.Black, skillCell);
+            }
+        }
+
+        private Vector TranslateGameCoordinatesInWindow(Vector coordinates)
+        {
+            var startPosition = new Vector(200, 200);
+            return coordinates;
         }
 
         #region ForTestMyGame

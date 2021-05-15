@@ -5,14 +5,14 @@ namespace MyRPGGame
 {
     public class Unit
     {
-        public readonly Swordsman UnitClass;
+        public readonly IWarrior UnitClass;
         public readonly UnitView Model;
         public readonly IControl Control;
         
-        public Unit(Swordsman unitClass, Image unitModel, IControl control)
+        public Unit(IWarrior unitClass, Image unitModel, IControl control)
         {
             UnitClass = unitClass;
-            Model = new UnitView(unitClass, unitModel);
+            Model = new UnitView((UnitClass)unitClass, unitModel);
             Control = control;
         }
 

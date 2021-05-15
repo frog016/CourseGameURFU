@@ -15,7 +15,7 @@ namespace MyRPGGame
 
         public Map(int countCellsWidth, int countCellsHeight)
         {
-            Player = new Unit(new Swordsman(14, new Vector(200, 200)), null, new PlayerControl(this));
+            Player = new Unit(new Guard(new Vector(200, 200)), null, new PlayerControl(this));
             Units = new List<Unit>();
 
             CellMap = new bool[countCellsWidth, countCellsHeight];
@@ -26,9 +26,9 @@ namespace MyRPGGame
 
         public void CreateEnemy()
         {
-            for (var i = 0; i < 2; i++)
+            for (var i = 0; i < 0; i++)
             {
-                var enemy = new Swordsman(2, new Vector(100 + (UnitView.UnitSize.Width + 200)*i, 100));
+                var enemy = new Swordsman(new Vector(100 + (UnitView.UnitSize.Width + 200)*i, 100));
                 Units.Add(new Unit(enemy, null, new AI(this, enemy)));
             }
         }

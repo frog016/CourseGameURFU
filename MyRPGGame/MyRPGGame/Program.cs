@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 
 namespace MyRPGGame
 {
@@ -14,7 +15,7 @@ namespace MyRPGGame
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BattleGround(600, 800)
+            Application.Run(new BattleGround(1260, 600)
             {
                 Size = new Size(1280, 720)
             });

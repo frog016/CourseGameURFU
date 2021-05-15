@@ -7,12 +7,13 @@ namespace MyRPGGame
 {
     public class AI : IControl
     {
-        private readonly Swordsman unitClass;
+        private readonly UnitClass unitClass;
         private Unit Target { get; set; }
+        private UnitClass TargetUnitClass => (UnitClass) Target.UnitClass;
         private readonly Map map;
         private readonly int speed = Map.CellSize;
 
-        public AI(Map map, Swordsman unitClass)
+        public AI(Map map, UnitClass unitClass)
         {
             this.map = map;
             this.unitClass = unitClass;
@@ -26,8 +27,9 @@ namespace MyRPGGame
 
             if (CheckTargetInAttackRange())
             {
-                unitClass.Attack(Target.UnitClass);
-                if (!Target.UnitClass.IsAlive)
+                var unitWarrior = (IWarrior) unitClass;
+                unitWarrior.UseSkill(0, Target);
+                if (!TargetUnitClass.IsAlive)
                 {
                     Target.SetUnitBorderState(map, false);
                     map.Units.Remove(Target);
@@ -39,10 +41,10 @@ namespace MyRPGGame
 
         public void MoveUnit(Keys key)
         {
-            var leftPoint = new Vector(Target.UnitClass.Location.X - UnitView.UnitSize.Width - Map.CellSize,
-                Target.UnitClass.Location.Y);
-            var rightPoint = new Vector(Target.UnitClass.Location.X + UnitView.UnitSize.Width + Map.CellSize,
-                Target.UnitClass.Location.Y);
+            var leftPoint = new Vector(TargetUnitClass.Location.X - UnitView.UnitSize.Width - Map.CellSize,
+                TargetUnitClass.Location.Y);
+            var rightPoint = new Vector(TargetUnitClass.Location.X + UnitView.UnitSize.Width + Map.CellSize,
+                TargetUnitClass.Location.Y);
 
             var target = (unitClass.Location - leftPoint).Length() < (unitClass.Location - rightPoint).Length() ? leftPoint : rightPoint;
             var neighbor = GetNeighbors(unitClass.Location)
@@ -66,7 +68,11 @@ namespace MyRPGGame
             var units = map.Units.ToList();
             units.Add(map.Player);
             Target = units.Where(u => u.UnitClass != unitClass)
-                .OrderBy(u => (u.UnitClass.Location - unitClass.Location).Length())
+                .OrderBy(u =>
+                { 
+                    var unit = (UnitClass) u.UnitClass; 
+                    return (unit.Location - unitClass.Location).Length();
+                })
                 .FirstOrDefault();
         }
 
@@ -78,7 +84,7 @@ namespace MyRPGGame
                 return false;
 
             if (unitClass.Location.X + currentDirection * (distance * Map.CellSize + (UnitView.UnitSize.Width / 20) * Map.CellSize) ==
-                Target.UnitClass.Location.X - currentDirection * (UnitView.UnitSize.Width / 20) * Map.CellSize && CheckUnitFront(-2, 2))
+                TargetUnitClass.Location.X - currentDirection * (UnitView.UnitSize.Width / 20) * Map.CellSize && CheckUnitFront(-2, 2))
                 return true;
 
             return false;
@@ -87,8 +93,8 @@ namespace MyRPGGame
         private bool CheckUnitFront(int segmentStart, int segmentEnd)
         {
             var rangeCellX = unitClass.CurrentDirection == Direction.Right ?
-                (unitClass.Location.X + (UnitView.UnitSize.Width/20)*10) / Map.CellSize + unitClass.AttackRange :
-                (unitClass.Location.X - (UnitView.UnitSize.Width / 20) * 10) / Map.CellSize - unitClass.AttackRange;
+                (unitClass.Location.X + (UnitView.UnitSize.Width/20)*10) / Map.CellSize + unitClass.Attributes.AttackRange :
+                (unitClass.Location.X - (UnitView.UnitSize.Width / 20) * 10) / Map.CellSize - unitClass.Attributes.AttackRange;
 
             if (!map.IsOnMap(new Vector(rangeCellX * 10, unitClass.Location.Y)))
                 return false;
@@ -103,13 +109,13 @@ namespace MyRPGGame
         private int LaunchAttackBeam(int direction)
         {
             var distanceToObject = 1;
-            while (distanceToObject <= unitClass.AttackRange &&
+            while (distanceToObject <= unitClass.Attributes.AttackRange &&
                    !map.CellMap[
                        unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
                        unitClass.Location.Y / Map.CellSize])
                 distanceToObject++;
 
-            return distanceToObject <= unitClass.AttackRange ? distanceToObject : -1;
+            return distanceToObject <= unitClass.Attributes.AttackRange ? distanceToObject : -1;
         }
 
         private List<Vector> GetNeighbors(Vector point)
