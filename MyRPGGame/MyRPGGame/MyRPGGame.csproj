@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Models\Game Сlasses\Guard.cs" />
     <Compile Include="MainMenu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +75,8 @@
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Unit.cs" />
     <Compile Include="Models\Skill.cs" />
+    <Compile Include="Models\Game Сlasses\Rogue.cs" />
+    <Compile Include="Models\Game Сlasses\Swordsman.cs" />
     <Compile Include="Views\AnimationState.cs" />
     <Compile Include="BattleGround.cs">
       <SubType>Form</SubType>
@@ -86,7 +89,7 @@
     <Compile Include="Views\UnitView.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\Classes.cs" />
+    <Compile Include="Models\UnitClass.cs" />
     <Compile Include="Models\Vector.cs" />
     <Compile Include="Vector_Test.cs" />
     <EmbeddedResource Include="BattleGround.resx">
@@ -122,6 +125,7 @@
   <ItemGroup>
     <Content Include="Maps\Map1.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

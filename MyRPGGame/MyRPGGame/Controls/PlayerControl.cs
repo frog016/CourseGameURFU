@@ -7,7 +7,6 @@ namespace MyRPGGame
     public class PlayerControl : IControl
     {
         private readonly Map map;
-        private UnitClass player => (UnitClass)map.Player.UnitClass;
         private readonly int speed = Map.CellSize;
 
         public PlayerControl(Map map)
@@ -23,9 +22,8 @@ namespace MyRPGGame
             var enemy = FindUnitInAttackRange();
             if (enemy == null) return;
 
-            var enemyUnitClass = (UnitClass) enemy.UnitClass;
             skillKeys[key](enemy);
-            if (enemyUnitClass.Attributes.Health <= 0)
+            if (enemy.UnitClass.Attributes.Health <= 0)
             {
                 map.Units.Remove(enemy);
                 enemy.SetUnitBorderState(map, false);
@@ -34,15 +32,15 @@ namespace MyRPGGame
 
         private bool CheckUnitFront(int segmentStart, int segmentEnd)
         {
-            var rangeCellX = player.CurrentDirection == Direction.Right ?
-                map.Player.Model.TopRight.X / Map.CellSize + player.Attributes.AttackRange :
-                map.Player.Model.TopLeft.X / Map.CellSize - player.Attributes.AttackRange;
+            var rangeCellX = map.Player.UnitClass.CurrentDirection == Direction.Right ?
+                map.Player.Model.TopRight.X / Map.CellSize + map.Player.UnitClass.Attributes.AttackRange :
+                map.Player.Model.TopLeft.X / Map.CellSize - map.Player.UnitClass.Attributes.AttackRange;
 
-            if (!map.IsOnMap(new Vector(rangeCellX*10, player.Location.Y)))
+            if (!map.UnitIsOnMap(new Vector(rangeCellX*10, map.Player.UnitClass.Location.Y)))
                 return false;
 
             for (var i = segmentStart; i <= segmentEnd; i++)
-                if (!map.CellMap[rangeCellX, player.Location.Y / Map.CellSize + i])
+                if (!map.CellMap[rangeCellX, map.Player.UnitClass.Location.Y / Map.CellSize + i])
                     return false;
 
             return true;
@@ -50,17 +48,16 @@ namespace MyRPGGame
 
         private Unit FindUnitInAttackRange()
         {
-            var currentDirection = player.CurrentDirection == Direction.Right ? 1 : -1;
+            var currentDirection = map.Player.UnitClass.CurrentDirection == Direction.Right ? 1 : -1;
             var distance = LaunchAttackBeam(currentDirection);
             if (distance == -1)
                 return null;
 
             foreach (var enemy in map.Units)
             {
-                var enemyUnitClass = (UnitClass) enemy.UnitClass;
-                if (player.Location.X + currentDirection *
+                if (map.Player.UnitClass.Location.X + currentDirection *
                     (distance * Map.CellSize + (UnitView.UnitSize.Width / 20) * Map.CellSize) ==
-                    enemyUnitClass.Location.X - currentDirection * (UnitView.UnitSize.Width / 20) * Map.CellSize)
+                    enemy.UnitClass.Location.X - currentDirection * (UnitView.UnitSize.Width / 20) * Map.CellSize)
                     return enemy;
             }
 
@@ -70,13 +67,13 @@ namespace MyRPGGame
         private int LaunchAttackBeam(int direction)
         {
             var distanceToObject = 1;
-            while (distanceToObject <= player.Attributes.AttackRange &&
+            while (distanceToObject <= map.Player.UnitClass.Attributes.AttackRange &&
                    !map.CellMap[
-                       player.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
-                       player.Location.Y / Map.CellSize])
+                       map.Player.UnitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
+                       map.Player.UnitClass.Location.Y / Map.CellSize])
                 distanceToObject++;
 
-            return distanceToObject <= player.Attributes.AttackRange ? distanceToObject : -1;
+            return distanceToObject <= map.Player.UnitClass.Attributes.AttackRange ? distanceToObject : -1;
         }
 
         public void MoveUnit(Keys key)
@@ -85,16 +82,16 @@ namespace MyRPGGame
             if (!moveTo.ContainsKey(key))
                 return;
 
-            player.CurrentDirection = moveTo[key].X > 0 ?
+            map.Player.UnitClass.CurrentDirection = moveTo[key].X > 0 ?
                 Direction.Right :
                 moveTo[key].X < 0 ? Direction.Left :
-                    player.CurrentDirection;
+                    map.Player.UnitClass.CurrentDirection;
 
-            if (!(map.IsOnMap(player.Location + moveTo[key]) && CheckCorrectMove(moveTo[key])))
+            if (!(map.UnitIsOnMap(map.Player.UnitClass.Location + moveTo[key]) && CheckCorrectMove(moveTo[key])))
                 return;
 
             map.Player.MoveBorder(map, moveTo[key]);
-            player.Location.Move(moveTo[key]);
+            map.Player.UnitClass.Location.Move(moveTo[key]);
 
         }
 
@@ -125,11 +122,11 @@ namespace MyRPGGame
             for (var i = 0; i < border; i++)
             {
                 var x = direction.X != 0 ?
-                    player.Location.X / Map.CellSize + sign * (UnitView.UnitSize.Width / (2 * Map.CellSize)) + sign :
-                    player.Location.X / Map.CellSize - (UnitView.UnitSize.Width / (2 * Map.CellSize)) + i;
+                    map.Player.UnitClass.Location.X / Map.CellSize + sign * (UnitView.UnitSize.Width / (2 * Map.CellSize)) + sign :
+                    map.Player.UnitClass.Location.X / Map.CellSize - (UnitView.UnitSize.Width / (2 * Map.CellSize)) + i;
                 var y = direction.Y == 0 ?
-                    player.Location.Y / Map.CellSize - (UnitView.UnitSize.Height / (2 * Map.CellSize)) + i :
-                    player.Location.Y / Map.CellSize + sign * (UnitView.UnitSize.Height / (2 * Map.CellSize)) + sign;
+                    map.Player.UnitClass.Location.Y / Map.CellSize - (UnitView.UnitSize.Height / (2 * Map.CellSize)) + i :
+                    map.Player.UnitClass.Location.Y / Map.CellSize + sign * (UnitView.UnitSize.Height / (2 * Map.CellSize)) + sign;
                 if (map.CellMap[x, y])
                     return false;
             }

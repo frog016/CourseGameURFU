@@ -5,11 +5,11 @@ namespace MyRPGGame
 {
     public class Unit
     {
-        public readonly IWarrior UnitClass;
+        public readonly UnitClass UnitClass;
         public readonly UnitView Model;
         public readonly IControl Control;
         
-        public Unit(IWarrior unitClass, Image unitModel, IControl control)
+        public Unit(UnitClass unitClass, Image unitModel, IControl control)
         {
             UnitClass = unitClass;
             Model = new UnitView((UnitClass)unitClass, unitModel);

@@ -17,8 +17,9 @@ namespace MyRPGGame
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new BattleGround
             {
-                Size = new Size(1280, 720)
-            });
+                Size = new Size(1280, 720),
+                MinimumSize = new Size(450, 450)
+        });
         }
     }
 }

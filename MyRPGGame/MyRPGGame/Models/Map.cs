@@ -52,12 +52,28 @@ namespace MyRPGGame
                 }
         }
 
-        public bool IsOnMap(Vector point)
+        public bool UnitIsOnMap(Vector point)
         {
             return point.X >= UnitView.UnitSize.Width / 2 &&
                    point.X <= MapCountCells.Width * CellSize - UnitView.UnitSize.Width / 2 &&
                    point.Y >= UnitView.UnitSize.Height / 2 &&
                    point.Y <= MapCountCells.Height * CellSize - UnitView.UnitSize.Height / 2;
+        }
+
+        public bool UnitIsOnMap(Point point)
+        {
+            return point.X >= UnitView.UnitSize.Width / 2 &&
+                   point.X <= MapCountCells.Width * CellSize - UnitView.UnitSize.Width / 2 &&
+                   point.Y >= UnitView.UnitSize.Height / 2 &&
+                   point.Y <= MapCountCells.Height * CellSize - UnitView.UnitSize.Height / 2;
+        }
+
+        public bool PointIsOnMap(Point point)
+        {
+            return point.X > 0 &&
+                   point.X < MapCountCells.Width * CellSize &&
+                   point.Y > 0 &&
+                   point.Y < MapCountCells.Height * CellSize;
         }
     }
 }

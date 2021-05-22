@@ -21,11 +21,11 @@ namespace MyRPGGame
             //this.sprite = sprite;
         }
 
-        public void DrawUnit(Graphics window)
+        public void DrawUnit(Graphics window, Point screenCenter)
         {
-            var dir = unit.CurrentDirection == Direction.Left? -1 : 1;
-            var res = new Point(unit.Location.X + dir * (UnitSize.Width / 20) * 10, unit.Location.Y);
-            window.DrawEllipse(new Pen(Color.Blue, 8), res.X, res.Y, 1, 1);
+            var direction = unit.CurrentDirection == Direction.Left? -1 : 1;
+            var directionPointer = new Point(screenCenter.X + direction * (UnitSize.Width / 20) * 10, screenCenter.Y);
+            window.DrawEllipse(new Pen(Color.Blue, 8), directionPointer.X, directionPointer.Y, 1, 1);
         }
 
         public void DrawCooldownBar(Graphics window)
