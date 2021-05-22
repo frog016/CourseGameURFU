@@ -10,11 +10,11 @@ namespace MyRPGGame
         private readonly Map map; 
         //private readonly Camera camera;
 
-        public BattleGround(int width, int height)
+        public BattleGround()
         {
             InitializeComponent();
             
-            map = new Map(width / 10, height / 10);
+            map = new Map("Map1");
             //camera = new Camera();
 
             SetAllTimers();

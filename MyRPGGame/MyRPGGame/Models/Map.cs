@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace MyRPGGame
 {
@@ -11,26 +13,16 @@ namespace MyRPGGame
         public readonly List<Unit> Units;
         public readonly bool[,] CellMap;
 
-        public readonly Size MapCountCells;
+        public Size MapCountCells { get; private set; }
 
-        public Map(int countCellsWidth, int countCellsHeight)
+        public Map(string mapName)
         {
-            Player = new Unit(new Guard(new Vector(200, 200)), null, new PlayerControl(this));
+            Player = new Unit(new Swordsman(new Vector(0, 0)), null, new PlayerControl(this));
             Units = new List<Unit>();
+            LoadMapFromFile(mapName);
 
-            CellMap = new bool[countCellsWidth, countCellsHeight];
-            MapCountCells = new Size(countCellsWidth, countCellsHeight);
-            CreateEnemy();
+            CellMap = new bool[MapCountCells.Width, MapCountCells.Height];
             InitializeMap();
-        }
-
-        public void CreateEnemy()
-        {
-            for (var i = 0; i < 0; i++)
-            {
-                var enemy = new Swordsman(new Vector(100 + (UnitView.UnitSize.Width + 200)*i, 100));
-                Units.Add(new Unit(enemy, null, new AI(this, enemy)));
-            }
         }
 
         private void InitializeMap()
@@ -38,6 +30,26 @@ namespace MyRPGGame
             Player.SetUnitBorderState(this, true);
             foreach (var unit in Units)
                 unit.SetUnitBorderState(this, true);
+        }
+
+        public void LoadMapFromFile(string mapName)
+        {
+            var mapFromFile = File.ReadAllText(@"..\..\Maps\" + mapName + ".txt").Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            MapCountCells = new Size(mapFromFile[0].Length * 5, mapFromFile.GetLength(0) * 7);
+
+            for (var i = 0; i < MapCountCells.Height / 7; i++)
+            for (var j = 0; j < MapCountCells.Width / 5; j++)
+                switch (mapFromFile[i][j])
+                {
+                    case 'P':
+                        var player = (UnitClass)Player.UnitClass;
+                        player.Location = new Vector(j * 50, i * 70);
+                        break;
+                    case 'E':
+                        var enemy = new Swordsman(new Vector(j * 50, i * 70));
+                        Units.Add(new Unit(enemy, null, new AI(this, enemy)));
+                        break;
+                }
         }
 
         public bool IsOnMap(Vector point)

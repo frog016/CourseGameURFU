@@ -15,7 +15,7 @@ namespace MyRPGGame
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BattleGround(1260, 600)
+            Application.Run(new BattleGround
             {
                 Size = new Size(1280, 720)
             });

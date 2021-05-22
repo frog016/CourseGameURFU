@@ -110,8 +110,9 @@ namespace MyRPGGame
         {
             var distanceToObject = 1;
             while (distanceToObject <= unitClass.Attributes.AttackRange &&
-                   !map.CellMap[
-                       unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
+                   map.IsOnMap(new Vector(unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
+                       unitClass.Location.Y / Map.CellSize)) &&
+                   !map.CellMap[unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
                        unitClass.Location.Y / Map.CellSize])
                 distanceToObject++;
 
