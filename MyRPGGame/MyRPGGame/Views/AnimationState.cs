@@ -1,6 +1,6 @@
 ﻿namespace MyRPGGame
 {
-    public enum State
+    public enum AnimationState
     {
         Stand,
         Walk,

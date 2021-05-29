@@ -77,6 +77,7 @@
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\Game Сlasses\Rogue.cs" />
     <Compile Include="Models\Game Сlasses\Swordsman.cs" />
+    <Compile Include="Sprites.cs" />
     <Compile Include="Views\AnimationState.cs" />
     <Compile Include="BattleGround.cs">
       <SubType>Form</SubType>
@@ -84,7 +85,6 @@
     <Compile Include="BattleGround.Designer.cs">
       <DependentUpon>BattleGround.cs</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IWarrior.cs" />
     <Compile Include="Controls\PlayerControl.cs" />
     <Compile Include="Views\UnitView.cs" />
     <Compile Include="Program.cs" />
@@ -124,6 +124,58 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Maps\Map1.txt" />
+    <None Include="Resources\stoit1mdmd.png" />
+    <Content Include="Sprites\GuardSprites\Attack1.png" />
+    <Content Include="Sprites\GuardSprites\Attack2.png" />
+    <Content Include="Sprites\GuardSprites\Attack3.png" />
+    <Content Include="Sprites\GuardSprites\Attack4.png" />
+    <Content Include="Sprites\GuardSprites\Death1.png" />
+    <Content Include="Sprites\GuardSprites\Death2.png" />
+    <Content Include="Sprites\GuardSprites\Death3.png" />
+    <Content Include="Sprites\GuardSprites\Death4.png" />
+    <Content Include="Sprites\GuardSprites\Stand1.png" />
+    <Content Include="Sprites\GuardSprites\Stand2.png" />
+    <Content Include="Sprites\GuardSprites\Stand3.png" />
+    <Content Include="Sprites\GuardSprites\Stand4.png" />
+    <Content Include="Sprites\GuardSprites\Walk1.png" />
+    <Content Include="Sprites\GuardSprites\Walk2.png" />
+    <Content Include="Sprites\GuardSprites\Walk3.png" />
+    <Content Include="Sprites\GuardSprites\Walk4.png" />
+    <Content Include="Sprites\RogueSprites\Attack1.png" />
+    <Content Include="Sprites\RogueSprites\Attack2.png" />
+    <Content Include="Sprites\RogueSprites\Attack3.png" />
+    <Content Include="Sprites\RogueSprites\Attack4.png" />
+    <Content Include="Sprites\RogueSprites\Death1.png" />
+    <Content Include="Sprites\RogueSprites\Death2.png" />
+    <Content Include="Sprites\RogueSprites\Death3.png" />
+    <Content Include="Sprites\RogueSprites\Death4.png" />
+    <Content Include="Sprites\RogueSprites\Stand1.png" />
+    <Content Include="Sprites\RogueSprites\Stand2.png" />
+    <Content Include="Sprites\RogueSprites\Stand3.png" />
+    <Content Include="Sprites\RogueSprites\Stand4.png" />
+    <Content Include="Sprites\RogueSprites\Walk1.png" />
+    <Content Include="Sprites\RogueSprites\Walk2.png" />
+    <Content Include="Sprites\RogueSprites\Walk3.png" />
+    <Content Include="Sprites\RogueSprites\Walk4.png" />
+    <Content Include="Sprites\WarriorSprites\Attack1.png" />
+    <Content Include="Sprites\WarriorSprites\Attack2.png" />
+    <Content Include="Sprites\WarriorSprites\Attack3.png" />
+    <Content Include="Sprites\WarriorSprites\Attack4.png" />
+    <Content Include="Sprites\WarriorSprites\Walk1.png" />
+    <Content Include="Sprites\WarriorSprites\Walk2.png" />
+    <Content Include="Sprites\WarriorSprites\Walk3.png" />
+    <Content Include="Sprites\WarriorSprites\Walk4.png" />
+    <Content Include="Sprites\WarriorSprites\Death1.png" />
+    <Content Include="Sprites\WarriorSprites\Death2.png" />
+    <Content Include="Sprites\WarriorSprites\Death3.png" />
+    <Content Include="Sprites\WarriorSprites\Death4.png" />
+    <Content Include="Sprites\WarriorSprites\Stand1.png" />
+    <Content Include="Sprites\WarriorSprites\Stand2.png" />
+    <Content Include="Sprites\WarriorSprites\Stand3.png" />
+    <Content Include="Sprites\WarriorSprites\Stand4.png" />
+    <None Include="Resources\stoit1ms.png" />
+    <None Include="Resources\stoit1res2biggest.png" />
+    <None Include="Resources\stoit1res.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

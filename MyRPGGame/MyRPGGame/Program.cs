@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
@@ -19,7 +20,8 @@ namespace MyRPGGame
             {
                 Size = new Size(1280, 720),
                 MinimumSize = new Size(450, 450)
-        });
+            });
+            //Application.Run(new MainMenu());
         }
     }
 }

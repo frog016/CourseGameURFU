@@ -16,16 +16,25 @@ namespace MyRPGGame
 
         public void TryAttack(Keys key)
         {
+            if (!map.Player.UnitClass.IsAlive)
+                return;
             var skillKeys = DefineSkillKeys();
-            if (!skillKeys.ContainsKey(key) || !CheckUnitFront(-2, 2))
+            if (!skillKeys.ContainsKey(key))
+                return;
+            if (!CheckUnitFront(-2, 2))
                 return;
             var enemy = FindUnitInAttackRange();
             if (enemy == null) return;
 
-            skillKeys[key](enemy);
-            if (enemy.UnitClass.Attributes.Health <= 0)
+            if (skillKeys[key](enemy))
             {
-                map.Units.Remove(enemy);
+                map.Player.Model.CurrentAnimationState = AnimationState.Attack;
+                map.Player.Model.CurrentFrame = 0;
+            }
+            if (!enemy.UnitClass.IsAlive)
+            {
+                enemy.Model.CurrentAnimationState = AnimationState.Death;
+                enemy.Model.CurrentFrame = 0;
                 enemy.SetUnitBorderState(map, false);
             }
         }
@@ -78,10 +87,13 @@ namespace MyRPGGame
 
         public void MoveUnit(Keys key)
         {
+            if (!map.Player.UnitClass.IsAlive)
+                return;
             var moveTo = DefineMoveKeys();
             if (!moveTo.ContainsKey(key))
                 return;
 
+            map.Player.Model.CurrentAnimationState = AnimationState.Walk;
             map.Player.UnitClass.CurrentDirection = moveTo[key].X > 0 ?
                 Direction.Right :
                 moveTo[key].X < 0 ? Direction.Left :
@@ -106,9 +118,9 @@ namespace MyRPGGame
             };
         }
 
-        private Dictionary<Keys, Action<Unit>> DefineSkillKeys()
+        private Dictionary<Keys, Func<Unit, bool>> DefineSkillKeys()
         {
-            return new Dictionary<Keys, Action<Unit>>
+            return new Dictionary<Keys, Func<Unit, bool>>
             {
                 { BindKeyboardKeys.FirstSkill, unit => map.Player.UnitClass.UseSkill(0, unit) },
                 { BindKeyboardKeys.SecondSkill, unit => map.Player.UnitClass.UseSkill(1, unit) }

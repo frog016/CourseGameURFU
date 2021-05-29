@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using MyRPGGame.Properties;
 
 namespace MyRPGGame
 {
@@ -17,10 +18,9 @@ namespace MyRPGGame
 
         public Map(string mapName)
         {
-            Player = new Unit(new Swordsman(new Vector(0, 0)), null, new PlayerControl(this));
+            Player = new Unit(new Swordsman(new Vector(0, 0)), Sprites.GetCopyWarriorSprite(AnimationState.Stand, 0), new PlayerControl(this));
             Units = new List<Unit>();
             LoadMapFromFile(mapName);
-
             CellMap = new bool[MapCountCells.Width, MapCountCells.Height];
             InitializeMap();
         }
@@ -47,7 +47,7 @@ namespace MyRPGGame
                         break;
                     case 'E':
                         var enemy = new Swordsman(new Vector(j * 50, i * 70));
-                        Units.Add(new Unit(enemy, null, new AI(this, enemy)));
+                        Units.Add(new Unit(enemy, Sprites.GetCopyWarriorSprite(AnimationState.Stand, 0), new AI(this, enemy)));
                         break;
                 }
         }

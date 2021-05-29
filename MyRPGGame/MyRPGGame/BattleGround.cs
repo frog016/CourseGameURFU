@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Timers;
@@ -9,57 +9,86 @@ namespace MyRPGGame
     public partial class BattleGround : Form
     {
         private readonly Map map;
-        private readonly Size visibleArea = new Size(400, 400);
+        private readonly Size visibleArea = new Size(700, 500);
         private Point screenCenter => new Point(Width/2, Height/2);
         private Rectangle focusScreen => new Rectangle(new Point(map.Player.UnitClass.Location.X - visibleArea.Width/2, map.Player.UnitClass.Location.Y - visibleArea.Height / 2), visibleArea);
+
+        private object locker = new object();
+
+        private System.Timers.Timer animationTimer;
+        private System.Timers.Timer deathPlayerTimer;
 
         public BattleGround()
         {
             map = new Map("Map1");
-
             InitializeComponent();
             SetAllTimers();
 
             Paint += DrawAllUnits;
             Paint += InitializeInterface;
             KeyDown += PressKeyDown;
+            KeyUp += (sender, args) =>
+            {
+                if (args.KeyCode == Keys.W || args.KeyCode == Keys.A || args.KeyCode == Keys.S ||
+                    args.KeyCode == Keys.D)
+                    map.Player.Model.CurrentAnimationState = AnimationState.Stand;
+            };
         }
 
         public void DrawAllUnits(object sender, PaintEventArgs e)
         {
-            if (!map.Player.UnitClass.IsAlive)
+            lock (locker)
             {
-                var loseForm = new LoseForm();
-                Hide();
-                loseForm.Show();
-            }
+                if (!map.Player.UnitClass.IsAlive)
+                    deathPlayerTimer.Start();
 
-            DoubleBuffered = true;
-            map.Player.Model.DrawUnit(e.Graphics, screenCenter);
-            map.Player.Model.DrawHpBar(e.Graphics);
-            foreach (var unit in map.Units)
-            {
-                unit.Model.DrawUnit(e.Graphics, screenCenter);
-                unit.Model.DrawHpBar(e.Graphics);
-            }
+                DoubleBuffered = true;
+                if (focusScreen.Contains(map.Player.UnitClass.Location.ToPoint()))
+                    map.Player.Model.DrawUnit(e.Graphics, screenCenter, focusScreen, map.MapCountCells);
+                map.Player.Model.DrawHpBar(e.Graphics);
+                foreach (var unit in map.Units.ToList())
+                {
+                    if (focusScreen.Contains(unit.UnitClass.Location.ToPoint())) 
+                        unit.Model.DrawUnit(e.Graphics, screenCenter, focusScreen, map.MapCountCells);
+                }
+                
+                DrawMap(e.Graphics);
+                DrawSegmentOfMap(e.Graphics);
 
-            DrawMap(e.Graphics);
-            //DrawTestUnits(e.Graphics);
-            DrawSegmentOfMap(e.Graphics);
-            Invalidate();
+                Invalidate();
+            }
         }
+
 
         private void SetAllTimers()
         {
-            var movePerSecond = new System.Timers.Timer(500);
+            var movePerSecond = new System.Timers.Timer(250);
             movePerSecond.AutoReset = true;
             movePerSecond.Elapsed += StartAllEnemies;
             movePerSecond.Start();
+
+            animationTimer = new System.Timers.Timer(150);
+            animationTimer.AutoReset = true;
+            animationTimer.Elapsed += map.Player.Model.PlayAnimation;
+            foreach (var unit in map.Units)
+                animationTimer.Elapsed += unit.Model.PlayAnimation;
+            animationTimer.Start();
+
+            deathPlayerTimer = new System.Timers.Timer(4000);
+            deathPlayerTimer.Elapsed += (sender, args) =>
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    var loseForm = new LoseForm();
+                    Hide();
+                    loseForm.Show();
+                }));
+            };
         }
 
         private void StartAllEnemies(object sender, ElapsedEventArgs e)
         {
-            var units = map.Units.ToList();
+            var units = map.Units.Where(u => u.UnitClass.IsAlive).ToList();
             foreach (var unit in units)
                 unit.Control.TryAttack(Keys.K);
             
@@ -103,6 +132,19 @@ namespace MyRPGGame
                             window.DrawEllipse(penForUnit, pointInWindow.X, pointInWindow.Y, 1, 1);
                     }
                 }
+        }
+
+        private Point ToPointInWindow(Rectangle focusScreen, Point screenCenter, Unit unit)
+        {
+            lock (locker)
+            {
+                var focusScreenCenter = new Point(focusScreen.Right - focusScreen.Width / 2,
+                    focusScreen.Bottom - focusScreen.Height / 2);
+                var distanceToUnit = new Point(focusScreenCenter.X - unit.UnitClass.Location.X,
+                    focusScreenCenter.Y - unit.UnitClass.Location.Y);
+                return new Point(screenCenter.X - distanceToUnit.X - 6 * unit.Model.currentSprite.Width / 10 - 5,
+                    screenCenter.Y - distanceToUnit.Y - 6 * unit.Model.currentSprite.Height / 10 - 20);
+            }
         }
 
         #region ForTestMyGame

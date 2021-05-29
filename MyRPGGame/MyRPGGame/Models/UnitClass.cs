@@ -11,10 +11,15 @@ namespace MyRPGGame
 
         public bool IsAlive => Attributes.Health > 0;
 
-        public void UseSkill(int skillNumber, Unit unit)
+        public bool UseSkill(int skillNumber, Unit unit)
         {
             if (Skills[skillNumber].Cooldown.IsReady())
-                Skills[skillNumber].UseSkill((UnitClass)unit.UnitClass);
+            {
+                Skills[skillNumber].UseSkill(unit.UnitClass);
+                return true;
+            }
+
+            return false;
         }
     }
 }
