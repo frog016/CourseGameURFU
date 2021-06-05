@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace MyRPGGame
 {
-    public partial class LoseForm : Form
+    public partial class EndGameForm : Form
     {
-        public LoseForm()
+        public EndGameForm(string condition)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -19,7 +20,7 @@ namespace MyRPGGame
 
             var loseRows = new List<TableRow>
             {
-                new TableRow(0, 1, 1, 60, new List<Control> {new Label { Text = "Game Over"}}, true),
+                new TableRow(0, 1, 1, 60, new List<Control> {new Label { Text = condition } }, true),
                 new TableRow(1, 1, 2, 25, new List<Control> {new Button { Text = "Menu"}, new Button { Text = "Exit" } }),
                 new TableRow(2, 0, 3, 15, new List<Control> {new Panel()}, true),
             };

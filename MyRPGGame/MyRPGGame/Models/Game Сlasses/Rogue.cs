@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MyRPGGame
 {
@@ -27,7 +28,7 @@ namespace MyRPGGame
         {
             return new List<Skill>
             {
-                new Skill("quick strike", target => target.Attributes.Health -= Attributes.Damage - target.Attributes.Armor, new Cooldown(1)),
+                new Skill("quick strike", target => target.Attributes.Health -= Math.Max(Attributes.Damage - target.Attributes.Armor, 0), new Cooldown(1)),
                 new Skill("backstab", target =>
                 {
                     var damageMultiplier = target.CurrentDirection == CurrentDirection ? 3 : 1;

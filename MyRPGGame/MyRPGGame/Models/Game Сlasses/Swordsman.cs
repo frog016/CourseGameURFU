@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MyRPGGame
 {
@@ -27,7 +28,7 @@ namespace MyRPGGame
         {
             return new List<Skill>
             {
-                new Skill("bash", target => target.Attributes.Health -= Attributes.Damage - target.Attributes.Armor, new Cooldown(3)),
+                new Skill("bash", target => target.Attributes.Health -= Math.Max(Attributes.Damage - target.Attributes.Armor, 0), new Cooldown(3)),
                 new Skill("berserk", target =>
                 {
                     Attributes.Damage *= 2;

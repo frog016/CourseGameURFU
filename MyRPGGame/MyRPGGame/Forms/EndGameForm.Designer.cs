@@ -1,7 +1,7 @@
 ﻿
 namespace MyRPGGame
 {
-    partial class LoseForm
+    partial class EndGameForm
     {
         /// <summary>
         /// Required designer variable.
@@ -36,7 +36,7 @@ namespace MyRPGGame
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "LoseForm";
+            this.Name = "EndGameForm";
             this.Text = "LoseForm";
             this.ResumeLayout(false);
 

@@ -4,8 +4,10 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace MyRPGGame
 {
@@ -19,7 +21,8 @@ namespace MyRPGGame
         private object locker = new object();
 
         private System.Timers.Timer animationTimer;
-        private System.Timers.Timer deathPlayerTimer;
+        private System.Timers.Timer endGameTimer;
+        private string gameResult;
 
         private Point screenCenter => new Point(Width/2, Height/2);
         private Rectangle focusScreen => new Rectangle(new Point(map.Player.UnitClass.Location.X - visibleArea.Width / 2, map.Player.UnitClass.Location.Y - visibleArea.Height / 2), visibleArea);
@@ -54,8 +57,11 @@ namespace MyRPGGame
             lock (locker)
             {
                 DoubleBuffered = true;
-                if (!map.Player.UnitClass.IsAlive)
-                    deathPlayerTimer.Start();
+                if (!map.Player.UnitClass.IsAlive || map.Units.All(u => !u.UnitClass.IsAlive))
+                {
+                    gameResult = map.Player.UnitClass.IsAlive ? "You win" : "Game Over";
+                    endGameTimer.Start();
+                }
 
                 DrawSegmentOfMap(e.Graphics);
                 foreach (var unit in map.Units.OrderBy(u => u.UnitClass.IsAlive).ToList())
@@ -68,7 +74,6 @@ namespace MyRPGGame
                 Invalidate();
             }
         }
-
 
         private void SetAllTimers()
         {
@@ -84,18 +89,19 @@ namespace MyRPGGame
                 animationTimer.Elapsed += unit.Model.PlayAnimation;
             animationTimer.Start();
 
-            deathPlayerTimer = new System.Timers.Timer(4000);
-            deathPlayerTimer.AutoReset = false;
-            deathPlayerTimer.Elapsed += (sender, args) =>
+            endGameTimer = new System.Timers.Timer(4000);
+            endGameTimer.AutoReset = false;
+            endGameTimer.Elapsed += (sender, args) => EndGame();
+        }
+
+        private void EndGame()
+        {
+            BeginInvoke(new Action(() =>
             {
-                BeginInvoke(new Action(() =>
-                {
-                    var loseForm = new LoseForm();
-                    Close();
-                    loseForm.Show();
-                    deathPlayerTimer.Dispose();
-                }));
-            };
+                var endGameForm = new EndGameForm(gameResult);
+                Close();
+                endGameForm.Show();
+            }));
         }
 
         private void StartAllEnemies(object sender, ElapsedEventArgs e)
@@ -103,7 +109,6 @@ namespace MyRPGGame
             var units = map.Units.Where(u => u.UnitClass.IsAlive);
             foreach (var unit in units)
                 unit.Control.TryAttack(Keys.K);
-            
         }
 
         private void PressKeyDown(object sender, KeyEventArgs e)
