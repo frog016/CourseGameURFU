@@ -12,6 +12,17 @@ namespace MyRPGGame
             CurrentDirection = Direction.Right;
         }
 
+        public override bool Equals(object obj)
+        {
+            var unit = obj as UnitClass;
+            return unit.GetHashCode() == GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return Attributes.Health * 321 + Attributes.Armor * 32 + Attributes.Damage * 3 + Attributes.AttackRange + Location.X*94 + Location.Y*17;
+        }
+
         private List<Skill> InitializationSkills()
         {
             return new List<Skill>

@@ -7,9 +7,20 @@ namespace MyRPGGame
         public Guard(Vector location)
         {
             Skills = InitializationSkills();
-            Attributes = new Attributes(14, 2, 2, 2);
+            Attributes = new Attributes(14, 2, 3, 2);
             Location = location;
             CurrentDirection = Direction.Right;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var unit = obj as Guard;
+            return unit.GetHashCode() == GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            return Attributes.Health * 321 + Attributes.Armor*32 + Attributes.Damage * 3 + Attributes.AttackRange;
         }
 
         private List<Skill> InitializationSkills()

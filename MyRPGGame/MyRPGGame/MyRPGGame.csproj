@@ -52,12 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="Models\Game Сlasses\Guard.cs" />
-    <Compile Include="MainMenu.cs">
+    <Compile Include="Forms\MainMenu.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainMenu.Designer.cs">
+    <Compile Include="Forms\MainMenu.Designer.cs">
       <DependentUpon>MainMenu.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Attributes.cs" />
@@ -65,10 +65,10 @@
     <Compile Include="Controls\BindKeyboardKeys.cs" />
     <Compile Include="Controls\Directoin.cs" />
     <Compile Include="Interfaces\IControl.cs" />
-    <Compile Include="LoseForm.cs">
+    <Compile Include="Forms\LoseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoseForm.Designer.cs">
+    <Compile Include="Forms\LoseForm.Designer.cs">
       <DependentUpon>LoseForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Cooldown.cs" />
@@ -77,12 +77,19 @@
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\Game Сlasses\Rogue.cs" />
     <Compile Include="Models\Game Сlasses\Swordsman.cs" />
-    <Compile Include="Sprites.cs" />
+    <Compile Include="Forms\TableRow.cs" />
+    <Compile Include="Forms\Table.cs" />
+    <Compile Include="Tests\GameLogic_Test.cs" />
+    <Compile Include="Tests\Cooldown_Test.cs" />
+    <Compile Include="Tests\Sprite_Test.cs" />
+    <Compile Include="Tests\Unit_Test.cs" />
+    <Compile Include="Views\Sprite.cs" />
+    <Compile Include="Views\Sprites.cs" />
     <Compile Include="Views\AnimationState.cs" />
-    <Compile Include="BattleGround.cs">
+    <Compile Include="Forms\BattleGround.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BattleGround.Designer.cs">
+    <Compile Include="Forms\BattleGround.Designer.cs">
       <DependentUpon>BattleGround.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PlayerControl.cs" />
@@ -91,9 +98,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\UnitClass.cs" />
     <Compile Include="Models\Vector.cs" />
-    <Compile Include="Vector_Test.cs" />
-    <EmbeddedResource Include="BattleGround.resx">
+    <Compile Include="Tests\Vector_Test.cs" />
+    <EmbeddedResource Include="Forms\BattleGround.resx">
       <DependentUpon>BattleGround.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LoseForm.resx">
+      <DependentUpon>LoseForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -105,6 +115,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Fonts\LifeCraft_Font.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -120,11 +131,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\TestSwordsManSprite.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Maps\Map1.txt" />
-    <None Include="Resources\stoit1mdmd.png" />
+    <Content Include="Maps\BigMap.txt" />
+    <Content Include="Sprites\Background\GameBackground.png" />
+    <Content Include="Sprites\Background\LoseBackground.png" />
+    <Content Include="Sprites\Background\MenuBackground.png" />
+    <Content Include="Sprites\ClassLogo\GuardLogo.png" />
+    <Content Include="Sprites\ClassLogo\RogueLogo.png" />
+    <Content Include="Sprites\ClassLogo\SwordsmanLogo.png" />
     <Content Include="Sprites\GuardSprites\Attack1.png" />
     <Content Include="Sprites\GuardSprites\Attack2.png" />
     <Content Include="Sprites\GuardSprites\Attack3.png" />
@@ -141,6 +155,12 @@
     <Content Include="Sprites\GuardSprites\Walk2.png" />
     <Content Include="Sprites\GuardSprites\Walk3.png" />
     <Content Include="Sprites\GuardSprites\Walk4.png" />
+    <Content Include="Sprites\Icons\Guard2.png" />
+    <Content Include="Sprites\Icons\Rogue1.png" />
+    <Content Include="Sprites\Icons\Rogue2.png" />
+    <Content Include="Sprites\Icons\Guard1.png" />
+    <Content Include="Sprites\Icons\Swordsman1.png" />
+    <Content Include="Sprites\Icons\Swordsman2.png" />
     <Content Include="Sprites\RogueSprites\Attack1.png" />
     <Content Include="Sprites\RogueSprites\Attack2.png" />
     <Content Include="Sprites\RogueSprites\Attack3.png" />
@@ -157,25 +177,22 @@
     <Content Include="Sprites\RogueSprites\Walk2.png" />
     <Content Include="Sprites\RogueSprites\Walk3.png" />
     <Content Include="Sprites\RogueSprites\Walk4.png" />
-    <Content Include="Sprites\WarriorSprites\Attack1.png" />
-    <Content Include="Sprites\WarriorSprites\Attack2.png" />
-    <Content Include="Sprites\WarriorSprites\Attack3.png" />
-    <Content Include="Sprites\WarriorSprites\Attack4.png" />
-    <Content Include="Sprites\WarriorSprites\Walk1.png" />
-    <Content Include="Sprites\WarriorSprites\Walk2.png" />
-    <Content Include="Sprites\WarriorSprites\Walk3.png" />
-    <Content Include="Sprites\WarriorSprites\Walk4.png" />
-    <Content Include="Sprites\WarriorSprites\Death1.png" />
-    <Content Include="Sprites\WarriorSprites\Death2.png" />
-    <Content Include="Sprites\WarriorSprites\Death3.png" />
-    <Content Include="Sprites\WarriorSprites\Death4.png" />
-    <Content Include="Sprites\WarriorSprites\Stand1.png" />
-    <Content Include="Sprites\WarriorSprites\Stand2.png" />
-    <Content Include="Sprites\WarriorSprites\Stand3.png" />
-    <Content Include="Sprites\WarriorSprites\Stand4.png" />
-    <None Include="Resources\stoit1ms.png" />
-    <None Include="Resources\stoit1res2biggest.png" />
-    <None Include="Resources\stoit1res.png" />
+    <Content Include="Sprites\SwordsmanSprites\Attack1.png" />
+    <Content Include="Sprites\SwordsmanSprites\Attack2.png" />
+    <Content Include="Sprites\SwordsmanSprites\Attack3.png" />
+    <Content Include="Sprites\SwordsmanSprites\Attack4.png" />
+    <Content Include="Sprites\SwordsmanSprites\Walk1.png" />
+    <Content Include="Sprites\SwordsmanSprites\Walk2.png" />
+    <Content Include="Sprites\SwordsmanSprites\Walk3.png" />
+    <Content Include="Sprites\SwordsmanSprites\Walk4.png" />
+    <Content Include="Sprites\SwordsmanSprites\Death1.png" />
+    <Content Include="Sprites\SwordsmanSprites\Death2.png" />
+    <Content Include="Sprites\SwordsmanSprites\Death3.png" />
+    <Content Include="Sprites\SwordsmanSprites\Death4.png" />
+    <Content Include="Sprites\SwordsmanSprites\Stand1.png" />
+    <Content Include="Sprites\SwordsmanSprites\Stand2.png" />
+    <Content Include="Sprites\SwordsmanSprites\Stand3.png" />
+    <Content Include="Sprites\SwordsmanSprites\Stand4.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

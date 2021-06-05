@@ -5,8 +5,12 @@ namespace MyRPGGame
 {
     public class Vector
     {
+        public static Vector Zero = new Vector(0, 0);
+
         public int X { get; private set; }
         public int Y { get; private set; }
+
+        public Vector() { }
 
         public Vector(int x, int y)
         {
@@ -14,19 +18,6 @@ namespace MyRPGGame
             Y = y;
         }
 
-        /// <summary>
-        /// Takes an angle in radians and returns a rotated vector.
-        /// </summary>
-        /// <param name="angle"></param>
-        /// <returns></returns>
-        //public Vector Rotate(double angle)
-        //{
-        //    var x = X * Math.Cos(angle) - Y * Math.Sin(angle);
-        //    var y = X * Math.Sin(angle) + Y * Math.Cos(angle);
-
-        //    return new Vector(x, y);
-        //}
-        
         public void Move(Vector direction)
         {
             X += direction.X;

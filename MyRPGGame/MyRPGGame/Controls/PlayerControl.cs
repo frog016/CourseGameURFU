@@ -28,13 +28,13 @@ namespace MyRPGGame
 
             if (skillKeys[key](enemy))
             {
-                map.Player.Model.CurrentAnimationState = AnimationState.Attack;
-                map.Player.Model.CurrentFrame = 0;
+                map.Player.Model.Sprite.CurrentAnimationState = AnimationState.Attack;
+                map.Player.Model.Sprite.CurrentFrame = 0;
             }
             if (!enemy.UnitClass.IsAlive)
             {
-                enemy.Model.CurrentAnimationState = AnimationState.Death;
-                enemy.Model.CurrentFrame = 0;
+                enemy.Model.Sprite.CurrentAnimationState = AnimationState.Death;
+                enemy.Model.Sprite.CurrentFrame = 0;
                 enemy.SetUnitBorderState(map, false);
             }
         }
@@ -93,12 +93,12 @@ namespace MyRPGGame
             if (!moveTo.ContainsKey(key))
                 return;
 
-            map.Player.Model.CurrentAnimationState = AnimationState.Walk;
             map.Player.UnitClass.CurrentDirection = moveTo[key].X > 0 ?
                 Direction.Right :
                 moveTo[key].X < 0 ? Direction.Left :
                     map.Player.UnitClass.CurrentDirection;
 
+            map.Player.Model.Sprite.CurrentAnimationState = AnimationState.Walk;
             if (!(map.UnitIsOnMap(map.Player.UnitClass.Location + moveTo[key]) && CheckCorrectMove(moveTo[key])))
                 return;
 

@@ -7,12 +7,12 @@ namespace MyRPGGame
     {
         public readonly UnitClass UnitClass;
         public readonly UnitView Model;
-        public IControl Control { get; private set; }
+        public readonly IControl Control;
 
-        public Unit(UnitClass unitClass, Image unitModel, IControl control)
+        public Unit(UnitClass unitClass, string path, IControl control)
         {
             UnitClass = unitClass;
-            Model = new UnitView(unitClass, unitModel);
+            Model = new UnitView(unitClass, path);
             Control = control;
         }
 

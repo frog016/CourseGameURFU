@@ -5,11 +5,13 @@ namespace MyRPGGame
     public class Cooldown
     {
         public readonly double CooldownTime;
-        private DateTime LastTimeUse { get; set; }
+        public DateTime LastTimeUse { get; private set; }
 
         /// <param name="cooldownTime">Time in seconds.</param>
         public Cooldown(double cooldownTime)
         {
+            if (cooldownTime < 0)
+                throw new ArgumentException();
             CooldownTime = cooldownTime;
             LastTimeUse = new DateTime();
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using MyRPGGame.Properties;
 
 namespace MyRPGGame
 {
@@ -16,20 +15,13 @@ namespace MyRPGGame
 
         public Size MapCountCells { get; private set; }
 
-        public Map(string mapName)
+        public Map(UnitClass player, string mapName)
         {
-            Player = new Unit(new Swordsman(new Vector(0, 0)), Sprites.GetCopyWarriorSprite(AnimationState.Stand, 0), new PlayerControl(this));
+            Player = new Unit(player, @"..\..\Sprites\"+ player.GetType().Name +"Sprites", new PlayerControl(this));
             Units = new List<Unit>();
             LoadMapFromFile(mapName);
             CellMap = new bool[MapCountCells.Width, MapCountCells.Height];
             InitializeMap();
-        }
-
-        private void InitializeMap()
-        {
-            Player.SetUnitBorderState(this, true);
-            foreach (var unit in Units)
-                unit.SetUnitBorderState(this, true);
         }
 
         public void LoadMapFromFile(string mapName)
@@ -42,12 +34,12 @@ namespace MyRPGGame
                 switch (mapFromFile[i][j])
                 {
                     case 'P':
-                        var player = (UnitClass)Player.UnitClass;
+                        var player = Player.UnitClass;
                         player.Location = new Vector(j * 50, i * 70);
                         break;
                     case 'E':
-                        var enemy = new Swordsman(new Vector(j * 50, i * 70));
-                        Units.Add(new Unit(enemy, Sprites.GetCopyWarriorSprite(AnimationState.Stand, 0), new AI(this, enemy)));
+                        var enemy = GenerateRandomUnit(new Vector(j * 50, i * 70));
+                        Units.Add(new Unit(enemy, @"..\..\Sprites\" + enemy.GetType().Name + "Sprites", new AI(this, enemy)));
                         break;
                 }
         }
@@ -57,23 +49,27 @@ namespace MyRPGGame
             return point.X >= UnitView.UnitSize.Width / 2 &&
                    point.X <= MapCountCells.Width * CellSize - UnitView.UnitSize.Width / 2 &&
                    point.Y >= UnitView.UnitSize.Height / 2 &&
-                   point.Y <= MapCountCells.Height * CellSize - UnitView.UnitSize.Height / 2;
+                   point.Y <= MapCountCells.Height * CellSize - UnitView.UnitSize.Height;
         }
 
-        public bool UnitIsOnMap(Point point)
+        private void InitializeMap()
         {
-            return point.X >= UnitView.UnitSize.Width / 2 &&
-                   point.X <= MapCountCells.Width * CellSize - UnitView.UnitSize.Width / 2 &&
-                   point.Y >= UnitView.UnitSize.Height / 2 &&
-                   point.Y <= MapCountCells.Height * CellSize - UnitView.UnitSize.Height / 2;
+            Player.SetUnitBorderState(this, true);
+            foreach (var unit in Units)
+                unit.SetUnitBorderState(this, true);
         }
 
-        public bool PointIsOnMap(Point point)
+        private UnitClass GenerateRandomUnit(Vector position)
         {
-            return point.X > 0 &&
-                   point.X < MapCountCells.Width * CellSize &&
-                   point.Y > 0 &&
-                   point.Y < MapCountCells.Height * CellSize;
+            var random = new Random();
+            switch (random.Next(0, 3))
+            {
+                case 0: return new Swordsman(position);
+                case 1: return new Guard(position);
+                case 2: return new Rogue(position);
+            }
+
+            return null;
         }
     }
 }

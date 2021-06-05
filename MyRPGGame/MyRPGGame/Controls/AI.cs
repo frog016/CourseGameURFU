@@ -8,7 +8,7 @@ namespace MyRPGGame
     public class AI : IControl
     {
         private readonly UnitClass unitClass;
-        private Unit unit => map.Units.Find(u => u.UnitClass.Location.ToPoint() == unitClass.Location.ToPoint());
+        private Unit unit => map.Units.Find(u => u.UnitClass == unitClass);
         private Unit Target { get; set; }
         private readonly Map map;
         private readonly int speed = Map.CellSize;
@@ -30,11 +30,11 @@ namespace MyRPGGame
             if (CheckTargetInAttackRange())
             {
                 if (unitClass.UseSkill(0, Target))
-                    unit.Model.CurrentAnimationState = AnimationState.Attack;
+                    unit.Model.Sprite.CurrentAnimationState = AnimationState.Attack;
                 if (!Target.UnitClass.IsAlive)
                 {
-                    Target.Model.CurrentAnimationState = AnimationState.Death;
-                    Target.Model.CurrentFrame = 0;
+                    Target.Model.Sprite.CurrentAnimationState = AnimationState.Death;
+                    Target.Model.Sprite.CurrentFrame = 0;
                     Target.SetUnitBorderState(map, false);
                 }
                 return;
@@ -45,13 +45,13 @@ namespace MyRPGGame
         public void MoveUnit(Keys key)
         {
             if (unit != null)
-                unit.Model.CurrentAnimationState = AnimationState.Walk;
+                unit.Model.Sprite.CurrentAnimationState = AnimationState.Walk;
             var leftPoint = new Vector(Target.UnitClass.Location.X - UnitView.UnitSize.Width - Map.CellSize,
                 Target.UnitClass.Location.Y);
             var rightPoint = new Vector(Target.UnitClass.Location.X + UnitView.UnitSize.Width + Map.CellSize,
                 Target.UnitClass.Location.Y);
 
-            var target = (unitClass.Location - leftPoint).Length() < (unitClass.Location - rightPoint).Length() ? leftPoint : rightPoint;
+            var target = (unitClass.Location - leftPoint).Length() <= (unitClass.Location - rightPoint).Length() ? leftPoint : rightPoint;
             var neighbor = GetNeighbors(unitClass.Location)
                 .OrderBy(s => ((target - s).Length(), s.X))
                 .Where(v => CheckCorrectMove(v - unitClass.Location))
@@ -63,7 +63,7 @@ namespace MyRPGGame
                     unitClass.CurrentDirection;
             if (map.UnitIsOnMap(neighbor) && CheckCorrectMove(direction))
             {
-                map.Units.Find(u => u.UnitClass == unitClass).MoveBorder(map, direction);
+                unit.MoveBorder(map, direction);
                 unitClass.Location.Move(direction);
             }
         }
@@ -72,10 +72,10 @@ namespace MyRPGGame
         {
             var units = map.Units.ToList();
             units.Add(map.Player);
-            Target = units.Where(u => u.UnitClass != unitClass)
+            Target = units.Where(u => u.UnitClass != unitClass && u.UnitClass.IsAlive)
                 .OrderBy(u =>
                 { 
-                    var unit = (UnitClass) u.UnitClass; 
+                    var unit = u.UnitClass; 
                     return (unit.Location - this.unitClass.Location).Length();
                 })
                 .FirstOrDefault();
@@ -115,8 +115,8 @@ namespace MyRPGGame
         {
             var distanceToObject = 1;
             while (distanceToObject <= unitClass.Attributes.AttackRange &&
-                   map.UnitIsOnMap(new Vector(unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
-                       unitClass.Location.Y / Map.CellSize)) &&
+                   map.UnitIsOnMap(new Vector(unitClass.Location.X + direction * ((UnitView.UnitSize.Width / 20)*10 + distanceToObject),
+                       unitClass.Location.Y)) &&
                    !map.CellMap[unitClass.Location.X / Map.CellSize + direction * (UnitView.UnitSize.Width / 20 + distanceToObject),
                        unitClass.Location.Y / Map.CellSize])
                 distanceToObject++;
@@ -148,7 +148,7 @@ namespace MyRPGGame
                 var y = direction.Y == 0 ?
                     unitClass.Location.Y / Map.CellSize - (UnitView.UnitSize.Height / (2 * Map.CellSize)) + i :
                     unitClass.Location.Y / Map.CellSize + sign * (UnitView.UnitSize.Height / (2 * Map.CellSize)) + sign;
-                if (map.CellMap[x, y])
+                if (map.UnitIsOnMap(new Vector(x, y)) && map.CellMap[x, y])
                     return false;
             }
 
